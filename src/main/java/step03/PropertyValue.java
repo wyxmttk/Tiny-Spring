@@ -2,6 +2,7 @@ package step03;
 
 public class PropertyValue {
 
+    //由于字段属于什么类在beanDefinition的class对象里已经记录，所以只需指明name-value
     private String name;
     private Object value;
 

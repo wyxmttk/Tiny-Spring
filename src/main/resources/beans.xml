@@ -1,0 +1,10 @@
+<beans>
+    <bean id="mapper" name="" class="step03.Mapper">
+    </bean>
+    <bean id="service" name="" class="step03.Service">
+        <property name="name" value="ljk">
+        </property>
+        <property name="mapper" ref="mapper">
+        </property>
+    </bean>
+</beans>

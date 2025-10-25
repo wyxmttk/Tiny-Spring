@@ -1,24 +1,50 @@
 package step03;
 
+import cn.hutool.core.io.IoUtil;
+import step03.core.io.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class Test {
+    public static ResourceLoader resourceLoader = new DefaultResourceLoader();
     public static void main(String[] args) {
-        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        beanFactory.registerBeanDefinition("mapper",new BeanDefinition(Mapper.class));
-        PropertyValues propertyValues = new PropertyValues();
-        propertyValues.addPropertyValue(new PropertyValue("name","ljk"));
-        propertyValues.addPropertyValue(new PropertyValue("mapper",new DefaultBeanReference("mapper")));
-        beanFactory.registerBeanDefinition("service",new BeanDefinition(Service.class,propertyValues));
-
-        Service service = (Service) beanFactory.getBean("service");
+//        testXml();
+//        testURL();
+        testFileSystem();
+    }
+    public static void testXml(){
+        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinition("classpath:beans.xml");
+        Service service = (Service)defaultListableBeanFactory.getBean("service");
         service.test();
-        service.getMapper().test();
-
-        Service newService = (Service) beanFactory.getBean("service");
-        newService.test();
-        newService.getMapper().test();
-
+    }
+    public static void testURL(){
+        UrlResource urlResource=null;
+        try {
+             urlResource= new UrlResource(new URL("https://github.com/wyxmttk/Tiny-Spring/blob/main/pom.xml"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        InputStream inputStream = urlResource.getInputStream();
+        String content = IoUtil.readUtf8(inputStream);
+        System.out.println(content);
+    }
+    public static void testFileSystem(){
+        FileSystemResource resource=new FileSystemResource("/Applications/IDEAWorkspace/TinySpring/src/main/resources/beans.xml");
+        DefaultListableBeanFactory defaultListableBeanFactory = new DefaultListableBeanFactory();
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(defaultListableBeanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinition(resource);
+        Service service = (Service)defaultListableBeanFactory.getBean("service");
+        service.test();
     }
 }
+
+
+
 class Service{
     private String name;
 
