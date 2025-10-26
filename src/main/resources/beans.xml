@@ -1,10 +1,10 @@
 <beans>
-    <bean id="mapper" name="" class="step03.Mapper">
+    <bean id="mapper" name="" class="wyxmttk.Mapper">
     </bean>
-    <bean id="service" name="" class="step03.Service">
-        <property name="name" value="ljk">
-        </property>
+    <bean id="service" name="" class="wyxmttk.Service">
         <property name="mapper" ref="mapper">
         </property>
     </bean>
+    <bean id="myBeanPostProcessor" name="" class="wyxmttk.MyBeanPostProcessor"/>
+    <bean id="myBeanFactoryPostProcessor" name="" class="wyxmttk.MyBeanFactoryPostProcessor"/>
 </beans>

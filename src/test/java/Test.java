@@ -1,8 +1,6 @@
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
-import step02.DefaultSingletonBeanRegistry;
-
-import java.security.Provider;
+import wyxmttk.singleton.DefaultSingletonBeanRegistry;
 
 public class Test {
     public static void main(String[] args) {
