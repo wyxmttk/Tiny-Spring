@@ -14,6 +14,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+    //根据args判断要用哪个构造器
     @Override
     public Object getBean(String beanName,Object... args) {
         Object singleton = getSingleton(beanName);

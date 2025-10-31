@@ -1,5 +1,5 @@
 <beans>
-    <bean id="mapper" name="" class="wyxmttk.Mapper">
+    <bean id="mapper" name="" class="wyxmttk.Mapper" init-method="init" destroy-method="destroy">
     </bean>
     <bean id="service" name="" class="wyxmttk.Service">
         <property name="mapper" ref="mapper">

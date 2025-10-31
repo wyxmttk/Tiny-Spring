@@ -1,7 +1,10 @@
 package wyxmttk;
 
 import cn.hutool.core.io.IoUtil;
+import wyxmttk.beanFactory.DefaultListableBeanFactory;
 import wyxmttk.context.ClasspathXmlApplicationContext;
+import wyxmttk.context.DisposableBean;
+import wyxmttk.context.InitializingBean;
 import wyxmttk.core.io.*;
 
 import java.io.InputStream;
@@ -14,8 +17,15 @@ public class Test {
 //        testXml();
 //        testURL();
 //        testFileSystem();
-        testProcessor();
+//        testProcessor();
+        testInitAndDestroy();
 
+    }
+    public static void testInitAndDestroy() {
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+        classpathXmlApplicationContext.registerShutdownHook();
+        Service service = (Service) classpathXmlApplicationContext.getBean("service");
+        service.test();
     }
     public static void testProcessor(){
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
@@ -53,7 +63,7 @@ public class Test {
 
 
 
-class Service{
+class Service implements InitializingBean, DisposableBean {
     private String name;
 
     private Mapper mapper;
@@ -102,8 +112,25 @@ class Service{
     public String getLocation() {
         return location;
     }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("destroy service");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("InitializingBean...");
+        age=100;
+    }
 }
 class Mapper{
+    public void destroy(){
+        System.out.println("destroy mapper");
+    }
+    public void init(){
+        System.out.println("init mapper");
+    }
 
     public void test(){
         System.out.println("mapper test");

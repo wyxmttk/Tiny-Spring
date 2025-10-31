@@ -1,6 +1,6 @@
 package wyxmttk.context;
 
-import wyxmttk.DefaultListableBeanFactory;
+import wyxmttk.beanFactory.DefaultListableBeanFactory;
 import wyxmttk.beanFactory.ConfigurableListableBeanFactory;
 
 public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext{

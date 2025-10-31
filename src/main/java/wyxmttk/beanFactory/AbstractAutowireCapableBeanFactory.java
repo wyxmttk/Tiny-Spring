@@ -1,16 +1,22 @@
 package wyxmttk.beanFactory;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.beanDefinition.BeanReference;
 import wyxmttk.beanDefinition.PropertyValue;
 import wyxmttk.beanDefinition.PropertyValues;
+import wyxmttk.context.DisposableBean;
+import wyxmttk.context.DisposableBeanAdapter;
+import wyxmttk.context.InitializingBean;
 import wyxmttk.instantiate.CglibSubclassingInstantiationStrategy;
 import wyxmttk.instantiate.InstantiationStrategy;
 import wyxmttk.instantiate.SimpleInstantiationStrategy;
 import wyxmttk.processor.BeanPostProcessor;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 //AutowireCapable意味着能自动注入属性和处理依赖
@@ -29,8 +35,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } catch (Exception e) {
             throw new RuntimeException("createBeanInstance error", e);
         }
+        registerDisposableBeanIfNecessary(beanName,bean,beanDefinition);
         registerSingleton(beanName, bean);
         return bean;
+    }
+
+    protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        if(bean instanceof DisposableBean || !StrUtil.isBlank(beanDefinition.getDestroyMethodName())) {
+            registerDisposableBean(beanName,new DisposableBeanAdapter(beanName,bean,beanDefinition));
+        }
     }
 
     protected Object createBeanInstance(String beanName, BeanDefinition beanDefinition, Object[] args) {
@@ -82,6 +95,28 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private void invokeInitMethods(String beanName, Object wrappedBean, BeanDefinition beanDefinition) {
+        if(wrappedBean instanceof InitializingBean initializingBean) {
+            try {
+                initializingBean.afterPropertiesSet();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String initMethodName = beanDefinition.getInitMethodName();
+        //不能强转后用对象调用，因为类型不知道，而且对象里也不一定有这个方法
+//        beanDefinition.getBeanClass().cast(wrappedBean);
+        if(StrUtil.isBlank(initMethodName)){
+            return;
+        }
+        try {
+            Method initMethod = beanDefinition.getBeanClass().getDeclaredMethod(initMethodName);
+            initMethod.setAccessible(true);
+            initMethod.invoke(wrappedBean);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
     //处理过程存在强转，会返回新对象

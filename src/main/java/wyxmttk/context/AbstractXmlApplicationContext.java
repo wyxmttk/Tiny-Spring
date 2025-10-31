@@ -1,6 +1,6 @@
 package wyxmttk.context;
 
-import wyxmttk.DefaultListableBeanFactory;
+import wyxmttk.beanFactory.DefaultListableBeanFactory;
 import wyxmttk.core.io.XmlBeanDefinitionReader;
 
 public abstract class AbstractXmlApplicationContext extends AbstractRefreshableApplicationContext{
