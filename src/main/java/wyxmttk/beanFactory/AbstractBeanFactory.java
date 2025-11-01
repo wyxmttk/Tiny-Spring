@@ -1,5 +1,6 @@
 package wyxmttk.beanFactory;
 
+import cn.hutool.core.util.ClassUtil;
 import wyxmttk.Test;
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.processor.BeanPostProcessor;
@@ -13,6 +14,17 @@ import java.util.Map;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableListableBeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
+    private ClassLoader beanClassLoader = ClassUtil.getClassLoader();
+
+    @Override
+    public ClassLoader getBeanClassLoader() {
+        return beanClassLoader;
+    }
+
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
+    }
 
     //根据args判断要用哪个构造器
     @Override
@@ -47,6 +59,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         beanPostProcessors.add(beanPostProcessor);
     }
+
+
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return beanPostProcessors;

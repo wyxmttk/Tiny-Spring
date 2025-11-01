@@ -1,5 +1,6 @@
 package wyxmttk.context;
 
+import wyxmttk.beanFactory.ApplicationContextAwareProcessor;
 import wyxmttk.beanFactory.ConfigurableListableBeanFactory;
 import wyxmttk.core.io.DefaultResourceLoader;
 import wyxmttk.core.io.ResourceLoader;
@@ -11,9 +12,12 @@ import java.util.Map;
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
     @Override
     public void refresh() {
+        System.out.println("application context: "+this+" printed by "+this.getClass().getName());
         refreshBeanFactory();
 
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
         invokeBeanFactoryPostProcessors(beanFactory);
 

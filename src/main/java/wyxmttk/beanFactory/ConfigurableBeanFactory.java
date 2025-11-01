@@ -5,4 +5,6 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory {
     String SCOPE_PROTOTYPE = "prototype";
 
     void destroySingletons();
+
+    ClassLoader getBeanClassLoader();
 }

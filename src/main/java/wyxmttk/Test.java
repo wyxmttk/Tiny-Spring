@@ -1,7 +1,8 @@
 package wyxmttk;
 
 import cn.hutool.core.io.IoUtil;
-import wyxmttk.beanFactory.DefaultListableBeanFactory;
+import wyxmttk.beanFactory.*;
+import wyxmttk.context.ApplicationContext;
 import wyxmttk.context.ClasspathXmlApplicationContext;
 import wyxmttk.context.DisposableBean;
 import wyxmttk.context.InitializingBean;
@@ -10,6 +11,7 @@ import wyxmttk.core.io.*;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 public class Test {
     public static ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -18,9 +20,17 @@ public class Test {
 //        testURL();
 //        testFileSystem();
 //        testProcessor();
-        testInitAndDestroy();
-
+//        testInitAndDestroy();
+        testAware();
     }
+
+    public static void testAware() {
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+        classpathXmlApplicationContext.registerShutdownHook();
+        Service service = (Service) classpathXmlApplicationContext.getBean("service");
+        service.test();
+    }
+
     public static void testInitAndDestroy() {
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
         classpathXmlApplicationContext.registerShutdownHook();
@@ -124,7 +134,7 @@ class Service implements InitializingBean, DisposableBean {
         age=100;
     }
 }
-class Mapper{
+class Mapper implements BeanClassLoaderAware, BeanFactoryAware, ApplicationContextAware {
     public void destroy(){
         System.out.println("destroy mapper");
     }
@@ -132,9 +142,45 @@ class Mapper{
         System.out.println("init mapper");
     }
 
+    private ClassLoader beanClassLoader;
+
+    private ApplicationContext applicationContext;
+
+    private BeanFactory beanFactory;
+
     public void test(){
+
         System.out.println("mapper test");
+        System.out.println("beanClassLoader:"+getBeanClassLoader()+"from mapper");
+        System.out.println("applicationContext:"+getApplicationContext()+"from mapper");
+        System.out.println("beanFactory:"+getBeanFactory()+"from mapper");
     }
 
+    public ClassLoader getBeanClassLoader() {
+        return beanClassLoader;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext=applicationContext;
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader=beanClassLoader;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory=beanFactory;
+    }
 }
 
