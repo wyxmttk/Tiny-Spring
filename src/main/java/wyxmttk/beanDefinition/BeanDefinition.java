@@ -1,5 +1,7 @@
 package wyxmttk.beanDefinition;
 
+import wyxmttk.beanFactory.ConfigurableBeanFactory;
+
 public class BeanDefinition {
     private Class<?> beanClass;
 
@@ -10,6 +12,27 @@ public class BeanDefinition {
     private String initMethodName;
 
     private String destroyMethodName;
+
+    private final String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    private final String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
+    private String scope = SCOPE_SINGLETON;
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setPrototype() {
+        this.scope = SCOPE_PROTOTYPE;
+    }
+
+    public void setSingleton() {
+        this.scope = SCOPE_SINGLETON;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
     public String getInitMethodName() {
         return initMethodName;

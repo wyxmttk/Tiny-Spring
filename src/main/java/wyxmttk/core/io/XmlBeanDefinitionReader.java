@@ -69,6 +69,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String className = bean.getAttribute("class");
             String initMethod = bean.getAttribute("init-method");
             String destroyMethod = bean.getAttribute("destroy-method");
+            String scope = bean.getAttribute("scope");
 
 
 
@@ -86,6 +87,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 beanDefinition.setDestroyMethodName(destroyMethod);
             }
 
+            if(!StrUtil.isBlank(scope)) {
+                beanDefinition.setScope(scope);
+            }
 
             PropertyValues propertyValues = beanDefinition.getPropertyValues();
             NodeList properties = bean.getChildNodes();

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 //封装操作单例map的方法，不关心单例如何创建而来
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
+    //是为了区分从Map里获取某个值时，键存不存在。如果存在，值会为NULL_OBJECT，以表明这个工厂创建的就是null对象，并非键值对不存在导致的返回null
+    public static final Object NULL_OBJECT = new Object();
 
     private final Map<String, Object> singletonObjects = new HashMap<>();
 

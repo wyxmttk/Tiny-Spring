@@ -36,11 +36,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new RuntimeException("createBeanInstance error", e);
         }
         registerDisposableBeanIfNecessary(beanName,bean,beanDefinition);
-        registerSingleton(beanName, bean);
+        if(SCOPE_SINGLETON.equals(beanDefinition.getScope())) {
+            registerSingleton(beanName, bean);
+        }
+
         return bean;
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        //原型对象的生命周期交由用户处理
+        if(ConfigurableBeanFactory.SCOPE_PROTOTYPE.equals(beanDefinition.getScope())) {
+            return;
+        }
+
         if(bean instanceof DisposableBean || !StrUtil.isBlank(beanDefinition.getDestroyMethodName())) {
             registerDisposableBean(beanName,new DisposableBeanAdapter(beanName,bean,beanDefinition));
         }

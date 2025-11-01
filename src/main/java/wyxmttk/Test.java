@@ -16,12 +16,26 @@ import java.util.Map;
 public class Test {
     public static ResourceLoader resourceLoader = new DefaultResourceLoader();
     public static void main(String[] args) {
+        System.out.println("java.version=" + System.getProperty("java.version"));
+        System.out.println("java.runtime.version=" + System.getProperty("java.runtime.version"));
 //        testXml();
 //        testURL();
 //        testFileSystem();
 //        testProcessor();
 //        testInitAndDestroy();
-        testAware();
+//        testAware();
+        testFactoryBeanAndScope();
+    }
+
+    public static void testFactoryBeanAndScope(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+        classpathXmlApplicationContext.registerShutdownHook();
+        Service service = (Service) classpathXmlApplicationContext.getBean("service");
+        service.test();
+        Service service1 = (Service) classpathXmlApplicationContext.getBean("service");
+        service1.test();
+        System.out.println(service);
+        System.out.println(service1);
     }
 
     public static void testAware() {
@@ -74,6 +88,8 @@ public class Test {
 
 
 class Service implements InitializingBean, DisposableBean {
+    private UserDao userDao;
+
     private String name;
 
     private Mapper mapper;
@@ -81,6 +97,18 @@ class Service implements InitializingBean, DisposableBean {
     private String location;
 
     private int age;
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setMapper(Mapper mapper) {
+        this.mapper = mapper;
+    }
 
     public void setAge(int age) {
         this.age = age;
@@ -117,6 +145,7 @@ class Service implements InitializingBean, DisposableBean {
         System.out.println(location);
         System.out.println(age);
         mapper.test();
+        userDao.method();
     }
 
     public String getLocation() {
@@ -134,6 +163,11 @@ class Service implements InitializingBean, DisposableBean {
         age=100;
     }
 }
+
+interface UserDao {
+    void method();
+}
+
 class Mapper implements BeanClassLoaderAware, BeanFactoryAware, ApplicationContextAware {
     public void destroy(){
         System.out.println("destroy mapper");
