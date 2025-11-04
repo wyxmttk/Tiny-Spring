@@ -24,7 +24,13 @@ public class Test {
 //        testProcessor();
 //        testInitAndDestroy();
 //        testAware();
-        testFactoryBeanAndScope();
+//        testFactoryBeanAndScope();
+        testEvent();
+    }
+
+    public static void testEvent(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+        classpathXmlApplicationContext.registerShutdownHook();
     }
 
     public static void testFactoryBeanAndScope(){

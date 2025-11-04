@@ -1,6 +1,8 @@
 package wyxmttk.context;
 
-public interface ConfigurableApplicationContext extends ApplicationContext {
+import wyxmttk.event.ApplicationEventPublisher;
+
+public interface ConfigurableApplicationContext extends ApplicationContext, ApplicationEventPublisher {
     void refresh();
 
     void registerShutdownHook();

@@ -72,7 +72,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String scope = bean.getAttribute("scope");
 
 
-
+            //
             Class<?> clazz = Class.forName(className);
 
             String beanName = getBeanName(id,name,className);
