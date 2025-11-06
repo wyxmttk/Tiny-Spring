@@ -2,10 +2,15 @@
     <bean id="mapper" name="" class="wyxmttk.Mapper" init-method="init" destroy-method="destroy">
     </bean>
 
-    <bean id="service" name="" class="wyxmttk.Service" scope="prototype">
+<!--    <bean id="service" name="" class="wyxmttk.Service" scope="prototype">-->
+<!--        <property name="mapper" ref="mapper"/>-->
+<!--        <property name="userDao" ref="userDao"/>-->
+<!--    </bean>-->
+    <bean id="service" name="" class="wyxmttk.Service">
         <property name="mapper" ref="mapper"/>
         <property name="userDao" ref="userDao"/>
     </bean>
+
     <bean id="myBeanPostProcessor" name="" class="wyxmttk.MyBeanPostProcessor"/>
 
     <bean id="myBeanFactoryPostProcessor" name="" class="wyxmttk.MyBeanFactoryPostProcessor"/>
@@ -15,5 +20,18 @@
     <bean id="contextClosedEventListener" name="" class="wyxmttk.ContextClosedEventListener"/>
 
     <bean id="contextRefreshedEventListener" name="" class="wyxmttk.ContextRefreshedEventListener"/>
+
+    <bean class="wyxmttk.aop.DefaultAdvisorAutoProxyCreator" />
+
+    <bean id="myBeforeAdvice" class="wyxmttk.TestMethodBeforeAdvice"/>
+
+    <bean id="myMethodInterceptor" class="wyxmttk.aop.MethodBeforeAdviceInterceptor">
+        <property name="methodBeforeAdvice" ref="myBeforeAdvice"/>
+    </bean>
+
+    <bean id="myAdvisor" class="wyxmttk.aop.AspectJExpressionPointcutAdvisor">
+        <property name="expression" value="execution(* wyxmttk.Service.*(..))"/>
+        <property name="advice" ref="myMethodInterceptor"/>
+    </bean>
 
 </beans>

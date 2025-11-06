@@ -1,7 +1,7 @@
-package wyxmttk.beanFactory;
+package wyxmttk.processor;
 
+import wyxmttk.beanFactory.ApplicationContextAware;
 import wyxmttk.context.ApplicationContext;
-import wyxmttk.processor.BeanPostProcessor;
 
 public class ApplicationContextAwareProcessor implements BeanPostProcessor {
     private final ApplicationContext applicationContext;

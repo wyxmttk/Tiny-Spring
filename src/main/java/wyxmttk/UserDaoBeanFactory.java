@@ -10,7 +10,6 @@ public class UserDaoBeanFactory implements FactoryBean<UserDao> {
     @Override
     public UserDao getObject() {
         InvocationHandler handler = (proxy, method, args) -> {
-
             System.out.println("被代理method:"+method.getName());
             return null;
         };

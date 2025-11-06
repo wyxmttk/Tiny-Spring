@@ -4,14 +4,11 @@ import cn.hutool.core.io.IoUtil;
 import wyxmttk.beanFactory.*;
 import wyxmttk.context.ApplicationContext;
 import wyxmttk.context.ClasspathXmlApplicationContext;
-import wyxmttk.context.DisposableBean;
-import wyxmttk.context.InitializingBean;
 import wyxmttk.core.io.*;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
 
 public class Test {
     public static ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -25,7 +22,14 @@ public class Test {
 //        testInitAndDestroy();
 //        testAware();
 //        testFactoryBeanAndScope();
-        testEvent();
+//        testEvent();
+        testAop();
+    }
+
+    public static void testAop(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("service");
+        service.test();
     }
 
     public static void testEvent(){
@@ -91,84 +95,6 @@ public class Test {
     }
 }
 
-
-
-class Service implements InitializingBean, DisposableBean {
-    private UserDao userDao;
-
-    private String name;
-
-    private Mapper mapper;
-
-    private String location;
-
-    private int age;
-
-    public UserDao getUserDao() {
-        return userDao;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
-    public void setMapper(Mapper mapper) {
-        this.mapper = mapper;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public Service(String name) {
-        this.name = name;
-    }
-
-    public Service() {
-
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Mapper getMapper() {
-        return mapper;
-    }
-
-    public void test(){
-        System.out.println(name);
-        System.out.println(location);
-        System.out.println(age);
-        mapper.test();
-        userDao.method();
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        System.out.println("destroy service");
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("InitializingBean...");
-        age=100;
-    }
-}
 
 interface UserDao {
     void method();

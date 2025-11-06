@@ -2,11 +2,9 @@ package wyxmttk.context;
 
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.beanDefinition.BeanDefinitionRegistry;
-import wyxmttk.beanFactory.ApplicationContextAwareProcessor;
+import wyxmttk.processor.ApplicationContextAwareProcessor;
 import wyxmttk.beanFactory.ConfigurableListableBeanFactory;
-import wyxmttk.beanFactory.DefaultListableBeanFactory;
 import wyxmttk.core.io.DefaultResourceLoader;
-import wyxmttk.core.io.ResourceLoader;
 import wyxmttk.event.*;
 import wyxmttk.processor.BeanFactoryPostProcessor;
 import wyxmttk.processor.BeanPostProcessor;

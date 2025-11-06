@@ -13,11 +13,13 @@ import wyxmttk.instantiate.CglibSubclassingInstantiationStrategy;
 import wyxmttk.instantiate.InstantiationStrategy;
 import wyxmttk.instantiate.SimpleInstantiationStrategy;
 import wyxmttk.processor.BeanPostProcessor;
+import wyxmttk.processor.InstantiationAwareBeanPostProcessor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 //AutowireCapable意味着能自动注入属性和处理依赖
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
@@ -29,9 +31,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) {
         Object bean;
         try {
-            bean = createBeanInstance(beanName, beanDefinition, args);
-            applyPropertyValues(beanName,bean,beanDefinition);
-            bean=initializeBean(beanName,bean,beanDefinition);
+            bean = resolveBeforeInstantiation(beanName,beanDefinition);
+            if (bean == null) {
+                bean = createBeanInstance(beanName, beanDefinition, args);
+                applyPropertyValues(beanName,bean,beanDefinition);
+                bean=initializeBean(beanName,bean,beanDefinition);
+            }
         } catch (Exception e) {
             throw new RuntimeException("createBeanInstance error", e);
         }
@@ -41,6 +46,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         return bean;
+    }
+    protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if(bean != null){
+            bean=applyBeanPostProcessorsAfterInitialization(bean,beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorBeforeInstantiation(Class<?> clazz,String beanName) {
+        for(BeanPostProcessor beanPostProcessor:getBeanPostProcessors()) {
+            if(beanPostProcessor instanceof InstantiationAwareBeanPostProcessor instantiationAwareBeanPostProcessor) {
+                Object result=instantiationAwareBeanPostProcessor.postProcessBeforeInstantiation(clazz,beanName);
+                if(result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
