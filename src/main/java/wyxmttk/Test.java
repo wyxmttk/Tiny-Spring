@@ -23,7 +23,13 @@ public class Test {
 //        testAware();
 //        testFactoryBeanAndScope();
 //        testEvent();
-        testAop();
+//        testAop();
+        testAnnotation();
+    }
+    public static void testAnnotation(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("myService");
+        service.testAnnotation();
     }
 
     public static void testAop(){

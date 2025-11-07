@@ -13,8 +13,8 @@ public class BeanDefinition {
 
     private String destroyMethodName;
 
-    private final String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
-    private final String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+    public static final String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    public static final String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
     private String scope = SCOPE_SINGLETON;
 

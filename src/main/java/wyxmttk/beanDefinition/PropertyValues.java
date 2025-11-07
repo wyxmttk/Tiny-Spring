@@ -11,6 +11,8 @@ public class PropertyValues {
     }
 
     public void addPropertyValue(PropertyValue propertyValue) {
+        //遍历集合时若要修改集合得用迭代器
+        propertyValueList.removeIf(pv -> pv.getName().equals(propertyValue.getName()));
         propertyValueList.add(propertyValue);
     }
 

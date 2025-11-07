@@ -1,10 +1,22 @@
 package wyxmttk;
 
+import wyxmttk.annotation.Component;
 import wyxmttk.context.DisposableBean;
 import wyxmttk.context.InitializingBean;
 
+import java.util.Properties;
+@Component("myService")
 class Service implements InitializingBean, DisposableBean {
 
+    private String token="${token}";
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     private UserDao userDao;
 
@@ -70,6 +82,10 @@ class Service implements InitializingBean, DisposableBean {
         if(userDao != null) {
             userDao.method();
         }
+
+    }
+    public void testAnnotation() {
+        System.out.println(token);
     }
 
     public String getLocation() {

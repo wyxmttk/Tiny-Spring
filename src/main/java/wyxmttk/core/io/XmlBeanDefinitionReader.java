@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import wyxmttk.annotation.ClassPathBeanDefinitionScanner;
 import wyxmttk.beanDefinition.*;
 
 import java.io.IOException;
@@ -14,12 +15,16 @@ import java.io.InputStream;
 
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
+    private ClassPathBeanDefinitionScanner scanner;
+
     public XmlBeanDefinitionReader(BeanDefinitionRegistry beanDefinitionRegistry) {
         super(beanDefinitionRegistry);
+        this.scanner = new ClassPathBeanDefinitionScanner(beanDefinitionRegistry);
     }
 
     public XmlBeanDefinitionReader(BeanDefinitionRegistry beanDefinitionRegistry, ResourceLoader resourceLoader) {
         super(beanDefinitionRegistry, resourceLoader);
+        this.scanner = new ClassPathBeanDefinitionScanner(beanDefinitionRegistry);
     }
 
     @Override
@@ -52,15 +57,27 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException {
         Document document = XmlUtil.readXML(inputStream);
         Element root = document.getDocumentElement();
-        NodeList beans = root.getChildNodes();
+        NodeList nodes = root.getChildNodes();
 
-        for (int i = 0; i < beans.getLength(); i++) {
-            Node node = beans.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
 
             if(!(node instanceof Element bean)){
                 continue;
             }
-            if(!"bean".equals(bean.getNodeName())) {
+            String nodeName = bean.getNodeName();
+            if(!"bean".equals(nodeName)) {
+                if(!"component-scan".equals(nodeName)) {
+                    continue;
+                }
+                String attribute = bean.getAttribute("base-packages");
+                if(StrUtil.isBlank(attribute)) {
+                    throw new IllegalArgumentException("base-packages attribute is required");
+                }
+                String[] packageArr = attribute.split(",");
+                for(String packageName:packageArr) {
+                    scanner.doScan(packageName);
+                }
                 continue;
             }
             //解析<bean>标签

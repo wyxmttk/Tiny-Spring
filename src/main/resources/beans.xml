@@ -1,37 +1,46 @@
 <beans>
-    <bean id="mapper" name="" class="wyxmttk.Mapper" init-method="init" destroy-method="destroy">
-    </bean>
+<!--    <bean id="mapper" name="" class="wyxmttk.Mapper" init-method="init" destroy-method="destroy">-->
+<!--    </bean>-->
 
-<!--    <bean id="service" name="" class="wyxmttk.Service" scope="prototype">-->
+<!--&lt;!&ndash;    <bean id="service" name="" class="wyxmttk.Service" scope="prototype">&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="mapper" ref="mapper"/>&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="userDao" ref="userDao"/>&ndash;&gt;-->
+<!--&lt;!&ndash;    </bean>&ndash;&gt;-->
+<!--    <bean id="service" name="" class="wyxmttk.Service">-->
 <!--        <property name="mapper" ref="mapper"/>-->
 <!--        <property name="userDao" ref="userDao"/>-->
 <!--    </bean>-->
-    <bean id="service" name="" class="wyxmttk.Service">
-        <property name="mapper" ref="mapper"/>
-        <property name="userDao" ref="userDao"/>
+
+<!--    <bean id="myBeanPostProcessor" name="" class="wyxmttk.MyBeanPostProcessor"/>-->
+
+<!--    <bean id="myBeanFactoryPostProcessor" name="" class="wyxmttk.MyBeanFactoryPostProcessor"/>-->
+
+<!--    <bean id="userDao" class="wyxmttk.UserDaoBeanFactory"/>-->
+
+<!--    <bean id="contextClosedEventListener" name="" class="wyxmttk.ContextClosedEventListener"/>-->
+
+<!--    <bean id="contextRefreshedEventListener" name="" class="wyxmttk.ContextRefreshedEventListener"/>-->
+
+<!--    <bean class="wyxmttk.aop.DefaultAdvisorAutoProxyCreator" />-->
+
+<!--    <bean id="myBeforeAdvice" class="wyxmttk.TestMethodBeforeAdvice"/>-->
+
+<!--    <bean id="myMethodInterceptor" class="wyxmttk.aop.MethodBeforeAdviceInterceptor">-->
+<!--        <property name="methodBeforeAdvice" ref="myBeforeAdvice"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myAdvisor" class="wyxmttk.aop.AspectJExpressionPointcutAdvisor">-->
+<!--        <property name="expression" value="execution(* wyxmttk.Service.*(..))"/>-->
+<!--        <property name="advice" ref="myMethodInterceptor"/>-->
+<!--    </bean>-->
+    <bean class="wyxmttk.processor.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:token.properties"/>
     </bean>
 
-    <bean id="myBeanPostProcessor" name="" class="wyxmttk.MyBeanPostProcessor"/>
-
-    <bean id="myBeanFactoryPostProcessor" name="" class="wyxmttk.MyBeanFactoryPostProcessor"/>
-
-    <bean id="userDao" class="wyxmttk.UserDaoBeanFactory"/>
-
-    <bean id="contextClosedEventListener" name="" class="wyxmttk.ContextClosedEventListener"/>
-
-    <bean id="contextRefreshedEventListener" name="" class="wyxmttk.ContextRefreshedEventListener"/>
-
-    <bean class="wyxmttk.aop.DefaultAdvisorAutoProxyCreator" />
-
-    <bean id="myBeforeAdvice" class="wyxmttk.TestMethodBeforeAdvice"/>
-
-    <bean id="myMethodInterceptor" class="wyxmttk.aop.MethodBeforeAdviceInterceptor">
-        <property name="methodBeforeAdvice" ref="myBeforeAdvice"/>
+    <bean id="myService" class="wyxmttk.Service">
+        <property name="token" value="${token}"/>
     </bean>
 
-    <bean id="myAdvisor" class="wyxmttk.aop.AspectJExpressionPointcutAdvisor">
-        <property name="expression" value="execution(* wyxmttk.Service.*(..))"/>
-        <property name="advice" ref="myMethodInterceptor"/>
-    </bean>
+
 
 </beans>
