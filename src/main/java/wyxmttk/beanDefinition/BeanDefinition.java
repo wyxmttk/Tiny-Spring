@@ -18,6 +18,10 @@ public class BeanDefinition {
 
     private String scope = SCOPE_SINGLETON;
 
+    public boolean isSingleton() {
+        return SCOPE_SINGLETON.equals(scope);
+    }
+
     public String getScope() {
         return scope;
     }

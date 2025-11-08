@@ -91,7 +91,6 @@ class Service implements InitializingBean, DisposableBean {
 //        if(userDao != null) {
 //            userDao.method();
 //        }
-
     }
     public void testAnnotation() {
         System.out.println(token);

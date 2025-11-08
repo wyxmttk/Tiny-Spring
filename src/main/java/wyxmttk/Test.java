@@ -16,8 +16,8 @@ import java.net.URL;
 public class Test {
     public static ResourceLoader resourceLoader = new DefaultResourceLoader();
     public static void main(String[] args) {
-        System.out.println("java.version=" + System.getProperty("java.version"));
-        System.out.println("java.runtime.version=" + System.getProperty("java.runtime.version"));
+//        System.out.println("java.version=" + System.getProperty("java.version"));
+//        System.out.println("java.runtime.version=" + System.getProperty("java.runtime.version"));
 //        testXml();
 //        testURL();
 //        testFileSystem();
@@ -29,8 +29,15 @@ public class Test {
 //        testAop();
 //        testAnnotation();
 //        testAutowired();
-        testNewAop();
+//        testNewAop();
+        testCircularDependency();
     }
+    public static void testCircularDependency() {
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("myService");
+        service.test();
+    }
+
     public static void testNewAop(){
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
         Service service = (Service) classpathXmlApplicationContext.getBean("myService");
@@ -139,11 +146,18 @@ class Mapper implements BeanClassLoaderAware, BeanFactoryAware, ApplicationConte
 
     private BeanFactory beanFactory;
 
+    @Autowired
+    private Service service;
+
     public void test(){
         System.out.println("mapper test");
         System.out.println("beanClassLoader:"+getBeanClassLoader()+"from mapper");
         System.out.println("applicationContext:"+getApplicationContext()+"from mapper");
         System.out.println("beanFactory:"+getBeanFactory()+"from mapper");
+
+        if(service!=null){
+            System.out.println("循环依赖Service:"+service.getClass().getName());
+        }
     }
 
     public ClassLoader getBeanClassLoader() {

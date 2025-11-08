@@ -2,6 +2,7 @@ package wyxmttk.beanFactory;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import wyxmttk.aop.DefaultAdvisorAutoProxyCreator;
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.beanDefinition.BeanReference;
 import wyxmttk.beanDefinition.PropertyValue;
@@ -31,24 +32,63 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) {
         Object bean;
         try {
+            //处理beanDefinition，与beanFactoryPostProcessor不同的是这边是懒处理。
             bean = resolveBeforeInstantiation(beanName,beanDefinition);
 
             if (bean == null) {
-
+                //使用cglib或jdk动态代理创建bean实例
                 bean = createBeanInstance(beanName, beanDefinition, args);
+                if(beanDefinition.isSingleton()) {
+                    Object finalBean = bean;
+                    addSingletonFactory(beanName,()->getEarlyReference(beanName,finalBean));
+                }
 
+                // 实例化后判断
+                boolean continueWithPropertyPopulation = applyBeanPostProcessorsAfterInstantiation(beanName, bean);
+                if (!continueWithPropertyPopulation) {
+                    return bean;
+                }
+
+                //解析@Autowired等自动注入相关的注解
                 applyBeanPostProcessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
-                // 给 Bean 填充属性
+                //给bean填充属性，主要为自动注入的属性以及xml定义的属性
                 applyPropertyValues(beanName,bean,beanDefinition);
-
-                bean=initializeBean(beanName,bean,beanDefinition);
+                //初始化bean，分为容器感知 前置 初始化 后置操作
+                //后置操作包括Aop创建代理对象
+                bean = initializeBean(beanName, bean, beanDefinition);
             }
         } catch (Exception e) {
             throw new RuntimeException("createBeanInstance error", e);
         }
         registerDisposableBeanIfNecessary(beanName,bean,beanDefinition);
-        if(SCOPE_SINGLETON.equals(beanDefinition.getScope())) {
-            registerSingleton(beanName, bean);
+
+        Object exposedBean = bean;
+
+        //该步作用主要是将缓存里的bean对象返回，同时清除二三级缓存并添加一级缓存，因为没有设置二级缓存到一级缓存的转换方法
+        //由于动态代理本质上是对原对象的一层包装，上述的直接修改原对象的操作，都会同步给代理对象。但是后置初始化方法的重复的代理操作返回的bean对象无需
+        //关注，除非本身bean定义就不是单例，那这时候缓存里也就不存在对象，那就必须用后置初始化操作返回的对象
+        if(beanDefinition.isSingleton()) {
+            exposedBean = getSingleton(beanName);
+            registerSingleton(beanName, exposedBean);
+        }
+        return exposedBean;
+    }
+    //TODO:待完善
+    protected boolean applyBeanPostProcessorsAfterInstantiation(String beanName, Object bean) {
+        return true;
+    }
+
+    protected Object getEarlyReference(String beanName,Object bean) {
+        Object result = bean;
+        List<BeanPostProcessor> beanPostProcessors = getBeanPostProcessors();
+        try {
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+                if(beanPostProcessor instanceof DefaultAdvisorAutoProxyCreator) {
+                    result = beanPostProcessor.postProcessAfterInitialization(bean, beanName);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return bean;
     }
