@@ -2,6 +2,7 @@ package wyxmttk.aop;
 
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
+import wyxmttk.beanDefinition.PropertyValues;
 import wyxmttk.beanFactory.BeanFactory;
 import wyxmttk.beanFactory.BeanFactoryAware;
 import wyxmttk.beanFactory.DefaultListableBeanFactory;
@@ -48,6 +49,11 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
             return new ProxyFactory(advisedSupport).getProxy();
         }
         return null;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName) {
+        return pvs;
     }
 
     private boolean isInfrastructureClass(Class<?> beanClass) {

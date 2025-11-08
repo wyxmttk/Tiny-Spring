@@ -1,6 +1,9 @@
 package wyxmttk;
 
 import cn.hutool.core.io.IoUtil;
+import wyxmttk.annotation.Autowired;
+import wyxmttk.annotation.Component;
+import wyxmttk.annotation.Qualifier;
 import wyxmttk.beanFactory.*;
 import wyxmttk.context.ApplicationContext;
 import wyxmttk.context.ClasspathXmlApplicationContext;
@@ -24,8 +27,15 @@ public class Test {
 //        testFactoryBeanAndScope();
 //        testEvent();
 //        testAop();
-        testAnnotation();
+//        testAnnotation();
+        testAutowired();
     }
+    public static void testAutowired() {
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("myService");
+        service.test();
+    }
+
     public static void testAnnotation(){
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
         Service service = (Service) classpathXmlApplicationContext.getBean("myService");
@@ -106,6 +116,8 @@ interface UserDao {
     void method();
 }
 
+@Component
+@Qualifier("real")
 class Mapper implements BeanClassLoaderAware, BeanFactoryAware, ApplicationContextAware {
     public void destroy(){
         System.out.println("destroy mapper");
@@ -121,7 +133,6 @@ class Mapper implements BeanClassLoaderAware, BeanFactoryAware, ApplicationConte
     private BeanFactory beanFactory;
 
     public void test(){
-
         System.out.println("mapper test");
         System.out.println("beanClassLoader:"+getBeanClassLoader()+"from mapper");
         System.out.println("applicationContext:"+getApplicationContext()+"from mapper");

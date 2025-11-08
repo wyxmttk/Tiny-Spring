@@ -4,19 +4,38 @@ import cn.hutool.core.util.ClassUtil;
 import wyxmttk.Test;
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.processor.BeanPostProcessor;
+import wyxmttk.processor.StringValueResolver;
 import wyxmttk.singleton.DefaultSingletonBeanRegistry;
 import wyxmttk.singleton.FactoryBeanRegistrySupport;
+import wyxmttk.util.ClassUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableListableBeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     private ClassLoader beanClassLoader = ClassUtil.getClassLoader();
+
+    private final List<StringValueResolver> stringValueResolvers = new ArrayList<>();
+
+    public StringValueResolver[] getStringValueResolvers() {
+        return stringValueResolvers.toArray(new StringValueResolver[0]);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for(StringValueResolver resolver : stringValueResolvers) {
+            result = resolver.resolve(result);
+        }
+        return result;
+    }
+
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver resolver) {
+        stringValueResolvers.add(resolver);
+    }
 
     @Override
     public ClassLoader getBeanClassLoader() {

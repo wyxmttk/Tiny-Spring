@@ -1,6 +1,9 @@
 package wyxmttk;
 
+import wyxmttk.annotation.Autowired;
 import wyxmttk.annotation.Component;
+import wyxmttk.annotation.Qualifier;
+import wyxmttk.annotation.Value;
 import wyxmttk.context.DisposableBean;
 import wyxmttk.context.InitializingBean;
 
@@ -8,7 +11,8 @@ import java.util.Properties;
 @Component("myService")
 class Service implements InitializingBean, DisposableBean {
 
-    private String token="${token}";
+    @Value("${token}")
+    private String token;
 
     public String getToken() {
         return token;
@@ -22,6 +26,8 @@ class Service implements InitializingBean, DisposableBean {
 
     private String name;
 
+    @Autowired
+    @Qualifier("real")
     private Mapper mapper;
 
     private String location;
@@ -76,12 +82,13 @@ class Service implements InitializingBean, DisposableBean {
         System.out.println(name);
         System.out.println(location);
         System.out.println(age);
+        System.out.println(mapper);
         if(mapper != null) {
             mapper.test();
         }
-        if(userDao != null) {
-            userDao.method();
-        }
+//        if(userDao != null) {
+//            userDao.method();
+//        }
 
     }
     public void testAnnotation() {

@@ -37,9 +37,9 @@
         <property name="location" value="classpath:token.properties"/>
     </bean>
 
-    <bean id="myService" class="wyxmttk.Service">
-        <property name="token" value="${token}"/>
-    </bean>
+<!--    <bean id="myService" class="wyxmttk.Service">-->
+<!--        <property name="token" value="${token}"/>-->
+<!--    </bean>-->
 
 
 

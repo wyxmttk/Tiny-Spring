@@ -12,6 +12,7 @@ import wyxmttk.context.InitializingBean;
 import wyxmttk.instantiate.CglibSubclassingInstantiationStrategy;
 import wyxmttk.instantiate.InstantiationStrategy;
 import wyxmttk.instantiate.SimpleInstantiationStrategy;
+import wyxmttk.processor.AutowiredAnnotationBeanPostProcessor;
 import wyxmttk.processor.BeanPostProcessor;
 import wyxmttk.processor.InstantiationAwareBeanPostProcessor;
 
@@ -32,9 +33,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean;
         try {
             bean = resolveBeforeInstantiation(beanName,beanDefinition);
+
             if (bean == null) {
+
                 bean = createBeanInstance(beanName, beanDefinition, args);
+
+                applyBeanPostProcessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
+                // 给 Bean 填充属性
                 applyPropertyValues(beanName,bean,beanDefinition);
+
                 bean=initializeBean(beanName,bean,beanDefinition);
             }
         } catch (Exception e) {
@@ -44,9 +51,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if(SCOPE_SINGLETON.equals(beanDefinition.getScope())) {
             registerSingleton(beanName, bean);
         }
-
         return bean;
     }
+
+    protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        for(BeanPostProcessor beanPostProcessor:getBeanPostProcessors()) {
+            if(beanPostProcessor instanceof AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor) {
+                PropertyValues propertyValues = autowiredAnnotationBeanPostProcessor.postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
+                if(propertyValues != null) {
+                    for(PropertyValue pV:propertyValues.getPropertyValueList()) {
+                        beanDefinition.getPropertyValues().addPropertyValue(pV);
+                    }
+                }
+            }
+        }
+    }
+
     protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
         Object bean = applyBeanPostProcessorBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
         if(bean != null){
@@ -191,5 +211,4 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         return result==null?bean:result;
     }
-
 }
