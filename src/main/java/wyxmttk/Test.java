@@ -28,8 +28,15 @@ public class Test {
 //        testEvent();
 //        testAop();
 //        testAnnotation();
-        testAutowired();
+//        testAutowired();
+        testNewAop();
     }
+    public static void testNewAop(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("myService");
+        service.test();
+    }
+
     public static void testAutowired() {
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
         Service service = (Service) classpathXmlApplicationContext.getBean("myService");

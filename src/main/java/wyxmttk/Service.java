@@ -8,6 +8,7 @@ import wyxmttk.context.DisposableBean;
 import wyxmttk.context.InitializingBean;
 
 import java.util.Properties;
+
 @Component("myService")
 class Service implements InitializingBean, DisposableBean {
 
@@ -86,6 +87,7 @@ class Service implements InitializingBean, DisposableBean {
         if(mapper != null) {
             mapper.test();
         }
+        System.out.println(token);
 //        if(userDao != null) {
 //            userDao.method();
 //        }

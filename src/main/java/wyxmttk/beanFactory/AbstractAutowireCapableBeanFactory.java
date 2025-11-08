@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
 
 //AutowireCapable意味着能自动注入属性和处理依赖
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {

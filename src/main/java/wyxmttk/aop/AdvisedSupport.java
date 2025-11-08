@@ -3,12 +3,14 @@ package wyxmttk.aop;
 
 import org.aopalliance.intercept.MethodInterceptor;
 
+import java.lang.annotation.Target;
+
 //对一个完整通知功能的支持，每个advisedSupport对象封装一个需要被代理的对象，拦截器(通知＋原方法)和方法匹配器
 public class AdvisedSupport {
     //是否用cglib代理
     private boolean isProxyTargetClass = true;
     //需要被代理的对象
-    private Object target;
+    private TargetSource target;
     //应为拦截器链
     private MethodInterceptor interceptor;
 
@@ -22,7 +24,7 @@ public class AdvisedSupport {
         isProxyTargetClass = proxyTargetClass;
     }
 
-    public AdvisedSupport(Object target, MethodInterceptor interceptor, MethodMatcher methodMatcher) {
+    public AdvisedSupport(TargetSource target, MethodInterceptor interceptor, MethodMatcher methodMatcher) {
         if(target == null || interceptor == null || methodMatcher == null) {
             throw new IllegalArgumentException();
         }
@@ -31,13 +33,15 @@ public class AdvisedSupport {
         this.methodMatcher = methodMatcher;
     }
 
-
-
-    public Object getTarget() {
-        return target;
+    public Class<?> getTargetClass() {
+        return target.getTargetClass();
     }
 
-    public void setTarget(Object target) {
+    public Object getTarget() {
+        return target.getTarget();
+    }
+
+    public void setTarget(TargetSource target) {
         this.target = target;
     }
 

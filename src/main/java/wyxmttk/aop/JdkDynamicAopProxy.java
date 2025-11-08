@@ -25,7 +25,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     @Override
     public Object getProxy() {
         return java.lang.reflect.Proxy.newProxyInstance(ClassUtil.getClassLoader()
-                ,advisedSupport.getTarget().getClass().getInterfaces(),this);
+                ,advisedSupport.getTargetClass().getInterfaces(),this);
     }
 
 
@@ -34,7 +34,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         method.setAccessible(true);
         MethodInterceptor interceptor = advisedSupport.getInterceptor();
         MethodMatcher methodMatcher = advisedSupport.getMethodMatcher();
-        if(methodMatcher.matches(method,advisedSupport.getTarget().getClass())) {
+        if(methodMatcher.matches(method,advisedSupport.getTargetClass())) {
             return interceptor.invoke(new ReflectiveMethodInvocation(advisedSupport.getTarget(),method,args));
         }
         return method.invoke(advisedSupport.getTarget(),args);
