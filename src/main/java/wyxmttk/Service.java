@@ -7,6 +7,7 @@ import wyxmttk.annotation.Value;
 import wyxmttk.context.DisposableBean;
 import wyxmttk.context.InitializingBean;
 
+import java.util.Date;
 import java.util.Properties;
 
 @Component("myService")
@@ -22,6 +23,9 @@ class Service implements InitializingBean, DisposableBean {
     public void setToken(String token) {
         this.token = token;
     }
+
+    @Value("${date}")
+    private Date date;
 
     private UserDao userDao;
 
@@ -91,6 +95,7 @@ class Service implements InitializingBean, DisposableBean {
 //        if(userDao != null) {
 //            userDao.method();
 //        }
+        System.out.println("日期转换:"+date+"类型:"+date.getClass());
     }
     public void testAnnotation() {
         System.out.println(token);

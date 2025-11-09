@@ -10,14 +10,17 @@ import wyxmttk.beanDefinition.PropertyValues;
 import wyxmttk.context.DisposableBean;
 import wyxmttk.context.DisposableBeanAdapter;
 import wyxmttk.context.InitializingBean;
+import wyxmttk.convert.ConversionService;
 import wyxmttk.instantiate.CglibSubclassingInstantiationStrategy;
 import wyxmttk.instantiate.InstantiationStrategy;
 import wyxmttk.instantiate.SimpleInstantiationStrategy;
 import wyxmttk.processor.AutowiredAnnotationBeanPostProcessor;
 import wyxmttk.processor.BeanPostProcessor;
 import wyxmttk.processor.InstantiationAwareBeanPostProcessor;
+import wyxmttk.util.ClassUtils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -166,6 +169,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 Object value = propertyValue.getValue();
                 if(value instanceof BeanReference beanReference){
                     value = getBean(beanReference.getBeanName());
+                }else{
+                    Class<?> sourceClass = value.getClass();
+                    Class<?> targetClass = ClassUtils.getClassOfFiled(propertyName, bean);
+                    ConversionService conversionService = getConversionService();
+                    if(conversionService == null){
+                        throw new RuntimeException("conversionService is null");
+                    }
+                    if(conversionService.canConvert(sourceClass, targetClass)) {
+                        value = conversionService.convert(value, targetClass);
+                    }
                 }
                 BeanUtil.setFieldValue(bean, propertyName, value);
             }

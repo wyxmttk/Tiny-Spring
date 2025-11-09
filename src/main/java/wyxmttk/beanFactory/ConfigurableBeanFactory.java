@@ -1,5 +1,6 @@
 package wyxmttk.beanFactory;
 
+import wyxmttk.convert.ConversionService;
 import wyxmttk.processor.StringValueResolver;
 
 public interface ConfigurableBeanFactory extends HierarchicalBeanFactory {
@@ -13,4 +14,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory {
     void addEmbeddedValueResolver(StringValueResolver resolver);
 
     String resolveEmbeddedValue(String value);
+
+    void registerConversionService(ConversionService conversionService);
+
 }

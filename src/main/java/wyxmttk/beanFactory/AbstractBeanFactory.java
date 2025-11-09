@@ -3,6 +3,7 @@ package wyxmttk.beanFactory;
 import cn.hutool.core.util.ClassUtil;
 import wyxmttk.Test;
 import wyxmttk.beanDefinition.BeanDefinition;
+import wyxmttk.convert.ConversionService;
 import wyxmttk.processor.BeanPostProcessor;
 import wyxmttk.processor.StringValueResolver;
 import wyxmttk.singleton.DefaultSingletonBeanRegistry;
@@ -19,8 +20,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     private final List<StringValueResolver> stringValueResolvers = new ArrayList<>();
 
+    private ConversionService conversionService;
+
     public StringValueResolver[] getStringValueResolvers() {
         return stringValueResolvers.toArray(new StringValueResolver[0]);
+    }
+
+    @Override
+    public void registerConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
     }
 
     @Override
@@ -105,4 +113,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     public abstract BeanDefinition getBeanDefinition(String beanName);
 
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args);
+
+    public ConversionService getConversionService() {
+        return conversionService;
+    }
 }

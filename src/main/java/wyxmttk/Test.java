@@ -30,8 +30,15 @@ public class Test {
 //        testAnnotation();
 //        testAutowired();
 //        testNewAop();
-        testCircularDependency();
+//        testCircularDependency();
+        testConverter();
     }
+    public static void testConverter(){
+        ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
+        Service service = (Service) classpathXmlApplicationContext.getBean("myService");
+        service.test();
+    }
+
     public static void testCircularDependency() {
         ClasspathXmlApplicationContext classpathXmlApplicationContext = new ClasspathXmlApplicationContext(new String[]{"classpath:beans.xml","classpath:spring-scan.xml"});
         Service service = (Service) classpathXmlApplicationContext.getBean("myService");

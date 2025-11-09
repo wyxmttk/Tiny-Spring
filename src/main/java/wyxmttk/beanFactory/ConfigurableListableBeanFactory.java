@@ -1,6 +1,7 @@
 package wyxmttk.beanFactory;
 
 import wyxmttk.beanDefinition.BeanDefinition;
+import wyxmttk.convert.ConversionService;
 import wyxmttk.processor.BeanPostProcessor;
 
 public interface ConfigurableListableBeanFactory extends ConfigurableBeanFactory,ListableBeanFactory,AutowireCapableBeanFactory {

@@ -2,6 +2,10 @@ package wyxmttk.context;
 
 import wyxmttk.beanDefinition.BeanDefinition;
 import wyxmttk.beanDefinition.BeanDefinitionRegistry;
+import wyxmttk.convert.Converter;
+import wyxmttk.convert.ConverterFactory;
+import wyxmttk.convert.DefaultConversionService;
+import wyxmttk.convert.GenericConverter;
 import wyxmttk.processor.ApplicationContextAwareProcessor;
 import wyxmttk.beanFactory.ConfigurableListableBeanFactory;
 import wyxmttk.core.io.DefaultResourceLoader;
@@ -23,20 +27,45 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         refreshBeanFactory();
 
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
-        //此处必须手动创建是因为ApplicationContext在创建后第一次获取时只能从这里拿
-        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+
+        prepareBeanFactory(beanFactory);
 
         invokeBeanFactoryPostProcessors(beanFactory);
 
         registerBeanPostProcessors(beanFactory);
-        //预先注册无需懒加载的bean对象，例如Processor
-        beanFactory.preInstantiateSingletons();
 
         initApplicationEventMulticaster();
 
         registerApplicationListeners();
 
+        finishBeanFactoryInitialization(beanFactory);
+
         finishRefresh();
+    }
+
+    private void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+
+        //预先注册无需懒加载的bean对象，例如Processor
+        beanFactory.preInstantiateSingletons();
+    }
+
+    private void registerConversionService(ConfigurableListableBeanFactory beanFactory) {
+        DefaultConversionService defaultConversionService = new DefaultConversionService();
+
+        getBeansOfType(GenericConverter.class).values().forEach(defaultConversionService::addConverter);
+        getBeansOfType(Converter.class).values().forEach(defaultConversionService::addConverter);
+        getBeansOfType(ConverterFactory.class).values().forEach(defaultConversionService::addConverterFactory);
+
+        beanFactory.registerConversionService(defaultConversionService);
+    }
+
+    private void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        //初始化ConversionService
+        registerConversionService(beanFactory);
+
+        //此处必须手动创建是因为ApplicationContext在创建后第一次获取时只能从这里拿
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+
     }
 
     private void finishRefresh() {
